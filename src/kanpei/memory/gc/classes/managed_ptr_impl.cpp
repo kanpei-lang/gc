@@ -19,7 +19,7 @@ managed_ptr<T>::managed_ptr(T *object, collector *parent) {
     this->parent = parent;
     this->object = object;
 
-    parent->add_reference(object, true);
+    parent->add_reference(*this);
 }
 
 template <typename T>
@@ -27,12 +27,12 @@ managed_ptr<T>::managed_ptr(const managed_ptr<T> &other) {
     this->parent = other.parent;
     this->object = other.object;
 
-    this->parent->add_reference(this->object);
+    this->parent->add_reference(*this);
 }
 
 template <typename T>
 managed_ptr<T>::~managed_ptr() {
-    this->parent->remove_reference(this->object);
+    this->parent->remove_reference(*this);
 }
 
 template <typename T>
@@ -45,7 +45,8 @@ managed_ptr<T> &managed_ptr<T>::operator=(const managed_ptr<T> &other) {
     this->object = other.object;
     this->parent = other.parent;
 
-    this->parent->add_reference(this->object);
+    // this->parent->add_reference(*this);
+    this->refcount++;
 
     return *this;
 }

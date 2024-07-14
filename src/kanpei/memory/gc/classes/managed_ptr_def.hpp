@@ -1,15 +1,15 @@
 #ifndef __KANPEI_MEMORY_GC_MANAGED_PTR_DEF
 #define __KANPEI_MEMORY_GC_MANAGED_PTR_DEF
 
+#include "i_managed.hpp"
+
 namespace kanpei {
     namespace memory {
         namespace gc {
             class collector;
 
             template <typename T>
-            class managed_ptr {
-               private:
-                collector *parent;
+            class managed_ptr : public i_managed {
                 T *object;
 
                public:

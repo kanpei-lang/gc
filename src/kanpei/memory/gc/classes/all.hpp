@@ -5,5 +5,6 @@
 #include "managed_object.hpp"
 #include "managed_ptr.hpp"
 #include "object_state.hpp"
+#include "ref.hpp"
 
 #endif  // __GC_CLASSES_ALL

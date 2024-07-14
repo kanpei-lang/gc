@@ -1,5 +1,7 @@
 #include "collector.hpp"
 
+#include "managed_object.hpp"
+
 using namespace kanpei::memory::gc;
 
 collector::~collector() {
@@ -9,20 +11,17 @@ collector::~collector() {
     }
 }
 
-void collector::add_reference(void *object, bool is_primitive) {
+void collector::add_reference(i_managed &object) {
     std::scoped_lock lock(this->object_map_mutex);
 
-    if (!this->objects.contains(object)) {
-        this->objects.insert_or_assign(object, object_state{0, is_primitive});
-    }
-
-    this->objects.at(object).refcount += 1;
+    this->objects.insert(&object);
+    object.refcount++;
 }
 
 void collector::collect() {
     unsigned long freed_count = 0;
 
-    freed_count += this->mark();
+    freed_count += this->mark(this->objects);
 
     /* if we didn't free anything, sleep for 10 millis */
     if (freed_count == 0) {
@@ -40,32 +39,35 @@ void collector::collect_loop() {
     }
 }
 
-unsigned long collector::mark() {
-    unsigned long finalized_count = 0;
+unsigned long collector::mark(i_managed_set &objects) {
+    unsigned long marked_count = 0;
     {
         /* acquire a lock on the refcount hash map */
-        std::scoped_lock lock(this->object_map_mutex);
+        std::scoped_lock lock(object_map_mutex);
 
-        /* loop over all of the objects and free
-            anything with a refcount of 0 */
-        for (auto &pair : this->objects) {
-            if (pair.second.refcount <= 0) {
-                if (!pair.second.is_primitive) {
-                    ((managed_object *)pair.first)->~managed_object();
+        /* loop over all of the objects and mark anything with
+            with a refcount of 0 */
+        for (auto managed_ptr : objects) {
+            if (managed_ptr->refcount <= 0) {
+                if (!managed_ptr->is_primitive) {
+                    this->mark(managed_ptr->references);
+                    delete managed_ptr;
+                } else {
+                    free(managed_ptr);
                 }
-                free(pair.first);
-                this->objects.erase(pair.first);
 
-                finalized_count += 1;
+                objects.erase(managed_ptr);
+
+                marked_count += 1;
             }
         }
     }
 
-    return finalized_count;
+    return marked_count;
 }
 
-void collector::remove_reference(void *object) {
+void collector::remove_reference(i_managed &object) {
     std::scoped_lock lock(this->object_map_mutex);
 
-    this->objects.at(object).refcount -= 1;
+    object.refcount--;
 }

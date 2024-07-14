@@ -2,18 +2,19 @@
 #define __KANPEI_MEMORY_GC_MANAGED_OBJECT
 
 #include "../parallel-hashmap/parallel_hashmap/phmap.h"
+#include "collector.hpp"
+#include "i_managed.hpp"
 #include "object_state.hpp"
 
 namespace kanpei {
     namespace memory {
         namespace gc {
-            class managed_object {
-               private:
-                phmap::parallel_flat_hash_map<void *, object_state> references;
-
+            class managed_object : public i_managed {
                public:
-                managed_object();
-                ~managed_object();
+                managed_object(collector *parent);
+
+                void add_reference(i_managed &object);
+                void remove_reference(i_managed &object);
             };
         }  // namespace gc
     }  // namespace memory

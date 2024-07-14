@@ -1,4 +1,5 @@
 build
 src/test.cpp
+src/test_object.hpp
 .vscode
 vgcore*

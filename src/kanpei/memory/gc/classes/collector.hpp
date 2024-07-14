@@ -6,8 +6,8 @@
 #include <mutex>
 #include <thread>
 
-#include "../parallel-hashmap/parallel_hashmap/phmap.h"
-#include "managed_object.hpp"
+#include "i_managed.hpp"
+#include "i_managed_set.hpp"
 #include "managed_ptr.hpp"
 #include "object_state.hpp"
 
@@ -19,11 +19,11 @@ namespace kanpei {
                 std::thread collect_thread;
                 std::atomic<bool> stop_collect_thread = false;
 
-                phmap::parallel_flat_hash_map<void *, object_state> objects;
-                std::mutex object_map_mutex;
+                i_managed_set objects;
+                std::recursive_mutex object_map_mutex;
 
                 void collect_loop();
-                unsigned long mark();
+                unsigned long mark(i_managed_set &objects);
 
                public:
                 ~collector();
@@ -38,10 +38,10 @@ namespace kanpei {
                     return managed_ptr<T[size]>((T[size])malloc(sizeof(T) * size), this);
                 }
 
-                void add_reference(void *object, bool is_primitive);
+                void add_reference(i_managed &object);
                 void collect();
                 void collect_forever();
-                void remove_reference(void *object);
+                void remove_reference(i_managed &object);
             };
         }  // namespace gc
     }  // namespace memory
