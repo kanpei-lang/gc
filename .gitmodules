@@ -1,3 +1,3 @@
-[submodule "src/gc/parallel-hashmap"]
-	path = src/gc/parallel-hashmap
+[submodule "src/kanpei/memory/gc/parallel-hashmap"]
+	path = src/kanpei/memory/gc/parallel-hashmap
 	url = https://github.com/greg7mdp/parallel-hashmap

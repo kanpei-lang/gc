@@ -1,19 +1,25 @@
-#ifndef __GC_CLASSES_MANAGED_PTR_IMPL
-#define __GC_CLASSES_MANAGED_PTR_IMPL
+#ifndef __KANPEI_MEMORY_GC_MANAGED_PTR_IMPL
+#define __KANPEI_MEMORY_GC_MANAGED_PTR_IMPL
 
 // clang-format off
 #include "managed_ptr.hpp"
-#include "garbage_collector.hpp"
+#include "collector.hpp"
 // clang-format on
 
-using namespace kanpei::memory;
+using namespace kanpei::memory::gc;
 
 template <typename T>
-managed_ptr<T>::managed_ptr(T *object, garbage_collector *parent) {
+managed_ptr<T>::managed_ptr() {
+    this->parent = nullptr;
+    this->object = nullptr;
+}
+
+template <typename T>
+managed_ptr<T>::managed_ptr(T *object, collector *parent) {
     this->parent = parent;
     this->object = object;
 
-    parent->add_reference(object);
+    parent->add_reference(object, true);
 }
 
 template <typename T>
@@ -38,6 +44,10 @@ template <typename T>
 managed_ptr<T> &managed_ptr<T>::operator=(const managed_ptr<T> &other) {
     this->object = other.object;
     this->parent = other.parent;
+
+    this->parent->add_reference(this->object);
+
+    return *this;
 }
 
-#endif  // __GC_CLASSES_MANAGED_PTR_IMPL
+#endif  // __KANPEI_MEMORY_GC_MANAGED_PTR
