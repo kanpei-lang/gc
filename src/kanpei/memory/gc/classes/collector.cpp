@@ -9,6 +9,16 @@ collector::~collector() {
     }
 }
 
+void collector::add_reference(void *object, bool is_primitive) {
+    std::scoped_lock lock(this->object_map_mutex);
+
+    if (!this->objects.contains(object)) {
+        this->objects.insert_or_assign(object, object_state{0, is_primitive});
+    }
+
+    this->objects.at(object).refcount += 1;
+}
+
 void collector::collect() {
     unsigned long freed_count = 0;
 
@@ -52,4 +62,10 @@ unsigned long collector::mark() {
     }
 
     return finalized_count;
+}
+
+void collector::remove_reference(void *object) {
+    std::scoped_lock lock(this->object_map_mutex);
+
+    this->objects.at(object).refcount -= 1;
 }

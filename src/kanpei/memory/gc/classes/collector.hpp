@@ -38,26 +38,10 @@ namespace kanpei {
                     return managed_ptr<T[size]>((T[size])malloc(sizeof(T) * size), this);
                 }
 
-                template <typename T>
-                void add_reference(T *object, bool is_primitive) {
-                    std::scoped_lock lock(this->object_map_mutex);
-
-                    if (!this->objects.contains(object)) {
-                        this->objects.insert_or_assign(object, object_state{0, is_primitive});
-                    }
-
-                    this->objects.at(object).refcount += 1;
-                }
-
+                void add_reference(void *object, bool is_primitive);
                 void collect();
                 void collect_forever();
-
-                template <typename T>
-                void remove_reference(T *object) {
-                    std::scoped_lock lock(this->object_map_mutex);
-
-                    this->objects.at(object).refcount -= 1;
-                }
+                void remove_reference(void *object);
             };
         }  // namespace gc
     }  // namespace memory
