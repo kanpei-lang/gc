@@ -9,11 +9,18 @@ managed_object::managed_object(collector *parent) : i_managed(false) {
     parent->add_reference(*this);
 }
 
+managed_object::~managed_object() {
+    for (auto reference : this->references) {
+        i_managed object = reference;
+        this->remove_reference(object);
+    }
+}
+
 void managed_object::add_reference(i_managed &object) {
     this->references.insert(&object);
-    object.refcount++;
+    this->parent->add_reference(object);
 }
 
 void managed_object::remove_reference(i_managed &object) {
-    object.refcount--;
+    this->parent->remove_reference(object);
 }

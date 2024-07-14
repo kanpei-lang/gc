@@ -25,4 +25,4 @@ namespace kanpei {
     }  // namespace memory
 }  // namespace kanpei
 
-#endif  // __KANPEI_MEMORY_GC_MANAGED_PTR_DEF
+#endif /* __KANPEI_MEMORY_GC_MANAGED_PTR_DEF */

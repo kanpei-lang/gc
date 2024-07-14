@@ -14,6 +14,9 @@
 namespace kanpei {
     namespace memory {
         namespace gc {
+            template <typename>
+            class ref;
+
             class collector {
                private:
                 std::thread collect_thread;
@@ -23,19 +26,24 @@ namespace kanpei {
                 std::recursive_mutex object_map_mutex;
 
                 void collect_loop();
-                unsigned long mark(i_managed_set &objects);
+                void finalize(i_managed &object);
+                // unsigned long mark(i_managed_set &objects);
+                void sweep();
+                void sweep_recurse();
 
                public:
                 ~collector();
 
                 template <typename T>
-                managed_ptr<T> allocate() {
-                    return managed_ptr<T>((T *)malloc(sizeof(T)), this);
+                ref<managed_ptr<T>> allocate() {
+                    return ref<managed_ptr<T>>(new managed_ptr<T>((T *)malloc(sizeof(T)), this));
                 }
 
-                template <typename T, size_t size>
-                managed_ptr<T[size]> allocate() {
-                    return managed_ptr<T[size]>((T[size])malloc(sizeof(T) * size), this);
+                template <typename T, std::size_t size>
+                ref<managed_ptr<T[size]>> allocate() {
+                    return ref<managed_ptr<T[size]>>(
+                        new managed_ptr<T[size]>((T[size])malloc(sizeof(T) * size), this)
+                    );
                 }
 
                 void add_reference(i_managed &object);
@@ -47,4 +55,4 @@ namespace kanpei {
     }  // namespace memory
 }  // namespace kanpei
 
-#endif  // __KANPEI_MEMORY_GC_COLLECTOR
+#endif /* __KANPEI_MEMORY_GC_COLLECTOR */

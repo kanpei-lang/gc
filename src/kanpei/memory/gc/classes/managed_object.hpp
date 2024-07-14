@@ -12,6 +12,7 @@ namespace kanpei {
             class managed_object : public i_managed {
                public:
                 managed_object(collector *parent);
+                ~managed_object();
 
                 void add_reference(i_managed &object);
                 void remove_reference(i_managed &object);
@@ -20,4 +21,4 @@ namespace kanpei {
     }  // namespace memory
 }  // namespace kanpei
 
-#endif  // __KANPEI_MEMORY_GC_MANAGED_OBJECT
+#endif /* __KANPEI_MEMORY_GC_MANAGED_OBJECT */

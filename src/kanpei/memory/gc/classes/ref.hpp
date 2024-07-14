@@ -1,7 +1,7 @@
 #ifndef __KANPEI_MEMORY_GC_REF
 #define __KANPEI_MEMORY_GC_REF
 
-#include "managed_object.hpp"
+#include "i_managed.hpp"
 
 namespace kanpei {
     namespace memory {
@@ -9,16 +9,17 @@ namespace kanpei {
             template <typename T>
             class ref {
                private:
-                managed_object *object;
+                i_managed *object;
 
                public:
-                ref<T>(managed_object *object) {
+                ref<T>(i_managed *object) {
                     this->object = object;
                     object->parent->add_reference(*object);
                 }
 
                 ref<T>(const ref<T> &other) {
                     this->object = other.object;
+                    other.object->parent->add_reference(*(other.object));
                 }
 
                 ~ref<T>() {
@@ -42,4 +43,4 @@ namespace kanpei {
     }  // namespace memory
 }  // namespace kanpei
 
-#endif  // __KANPEI_MEMORY_GC_REF
+#endif /* __KANPEI_MEMORY_GC_REF */

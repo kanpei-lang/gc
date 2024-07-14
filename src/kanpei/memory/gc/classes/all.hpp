@@ -7,4 +7,4 @@
 #include "object_state.hpp"
 #include "ref.hpp"
 
-#endif  // __GC_CLASSES_ALL
+#endif /* __GC_CLASSES_ALL */

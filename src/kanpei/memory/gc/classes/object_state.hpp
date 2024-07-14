@@ -12,4 +12,4 @@ namespace kanpei {
     }  // namespace memory
 }  // namespace kanpei
 
-#endif  // __KANPEI_MEMORY_GC_OBJECT_STATE
+#endif /* __KANPEI_MEMORY_GC_OBJECT_STATE */

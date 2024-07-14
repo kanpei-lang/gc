@@ -19,11 +19,12 @@ namespace kanpei {
             class i_managed {
                public:
                 bool is_primitive;
-                int refcount = 0;
+                unsigned int refcount = 0;
                 collector *parent;
                 i_managed_set references;
 
                 i_managed(bool is_primitive = true) : is_primitive(is_primitive) {}
+                virtual ~i_managed() {}
 
                 bool operator==(const i_managed &other) const {
                     return this == &other;
@@ -42,4 +43,4 @@ namespace std {
     };
 }  // namespace std
 
-#endif  // __KANPEI_MEMORY_GC_I_MANAGED
+#endif /* __KANPEI_MEMORY_GC_I_MANAGED */
