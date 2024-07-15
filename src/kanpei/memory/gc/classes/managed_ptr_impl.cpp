@@ -18,12 +18,16 @@ template <typename T>
 managed_ptr<T>::managed_ptr(T *object, collector *parent) {
     this->parent = parent;
     this->object = object;
+
+    parent->add_reference(*this);
 }
 
 template <typename T>
 managed_ptr<T>::managed_ptr(const managed_ptr<T> &other) {
     this->parent = other.parent;
     this->object = other.object;
+
+    parent->add_reference(*this);
 }
 
 template <typename T>
