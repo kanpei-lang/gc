@@ -26,10 +26,8 @@ namespace kanpei {
                 std::recursive_mutex object_map_mutex;
 
                 void collect_loop();
-                void finalize(i_managed &object);
-                // unsigned long mark(i_managed_set &objects);
-                void sweep();
-                void sweep_recurse();
+                void finalize(i_managed *object);
+                unsigned long sweep();
 
                public:
                 ~collector();

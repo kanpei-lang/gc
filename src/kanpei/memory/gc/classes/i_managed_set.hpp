@@ -7,7 +7,7 @@
 namespace kanpei {
     namespace memory {
         namespace gc {
-            typedef phmap::parallel_flat_hash_set<kanpei::memory::gc::i_managed *> i_managed_set;
+            typedef phmap::parallel_flat_hash_set<i_managed *> i_managed_set;
         }
     }  // namespace memory
 }  // namespace kanpei

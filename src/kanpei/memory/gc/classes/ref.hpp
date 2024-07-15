@@ -29,6 +29,8 @@ namespace kanpei {
                 ref<T> &operator=(const ref<T> &other) {
                     this->object = other.object;
                     other.object->parent->add_reference(*(other.object));
+
+                    return *this;
                 }
 
                 T &operator*() {

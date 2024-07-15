@@ -1,7 +1,5 @@
 #include "collector.hpp"
 
-#include <iostream>
-
 #include "managed_object.hpp"
 
 using namespace kanpei::memory::gc;
@@ -21,9 +19,7 @@ void collector::add_reference(i_managed &object) {
 }
 
 void collector::collect() {
-    unsigned long freed_count = 0;
-
-    // freed_count += this->mark(this->objects);
+    unsigned long freed_count = this->sweep();
 
     /* if we didn't free anything, sleep for 10 millis */
     if (freed_count == 0) {
@@ -41,56 +37,69 @@ void collector::collect_loop() {
     }
 }
 
-void collector::finalize(i_managed &object) {
-    std::cout << "finalize " << &object << std::endl;
+void collector::finalize(i_managed *object) {
+    std::lock_guard lock(this->object_map_mutex);
 
-    delete &object;
-    /*if (!object.is_primitive) {
-        delete &object;
-    } else {
-        free(&object);
-    }*/
-
-    objects.erase(&object);
+    delete object;
+    this->objects.erase(object);
 }
-
-/*unsigned long collector::mark(i_managed_set &objects) {
-    unsigned long marked_count = 0;
-    {
-        /* acquire a lock on the refcount hash map */
-/*std::scoped_lock lock(object_map_mutex);
-
-/* loop over all of the objects and mark anything with
-    with a refcount of 0 */
-/*for (auto managed_ptr : objects) {
-    if (managed_ptr->refcount == 0) {
-        if (!managed_ptr->is_primitive) {
-            this->mark(managed_ptr->references);
-            delete managed_ptr;
-        } else {
-            free(managed_ptr);
-        }
-
-        objects.erase(managed_ptr);
-
-        marked_count += 1;
-    }
-}
-}
-
-return marked_count;
-}*/
 
 void collector::remove_reference(i_managed &object) {
     std::scoped_lock lock(this->object_map_mutex);
 
-    if (--object.refcount == 1) {
-        this->finalize(object);
+    /* decrement the refcount and finalize this object as necessary */
+    if (--object.refcount == 0) {
+        this->finalize(&object);
     }
 }
 
-void collector::sweep() {
-    std::cout << "Sweep!" << std::endl;
-}
+unsigned long collector::sweep() {
+    std::scoped_lock lock(this->object_map_mutex);
 
-void collector::sweep_recurse() {}
+    /* perform a depth-first search over the graph of all known objects */
+    i_managed_set targets(this->objects.begin(), this->objects.end());
+    i_managed_set visited;
+
+    phmap::parallel_flat_hash_map<i_managed *, int> ref_counts;
+
+    while (!targets.empty()) {
+        /* get the current root node */
+        i_managed *current_node = *targets.begin();
+
+        /* increment the cyclic ref count of the node */
+        if (!ref_counts.contains(current_node)) {
+            ref_counts.insert_or_assign(current_node, 0);
+        }
+        ref_counts.at(current_node)++;
+
+        /* loop over all child references of the current node */
+        for (auto child_node : current_node->references) {
+            /* if we haven't visited this child, make it a target */
+            if (!visited.contains(child_node)) {
+                targets.insert(child_node);
+            }
+
+            /* regardless of if it's a new target, increment the child node refcount */
+            if (!ref_counts.contains(child_node)) {
+                ref_counts.insert_or_assign(child_node, 0);
+            }
+            ref_counts.at(child_node)++;
+        }
+
+        /* remove the current node from the list of targets and mark it visited */
+        targets.erase(current_node);
+        visited.insert(current_node);
+    }
+
+    /* loop over all of the objects we saw. if there are no external references any
+        objects, then they are only referenced cyclically. delete them in that case */
+    unsigned long finalized_count = 0;
+    for (auto pair : ref_counts) {
+        if (pair.first->refcount == pair.second) {
+            this->finalize(pair.first);
+            finalized_count++;
+        }
+    }
+
+    return finalized_count;
+}
