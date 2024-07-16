@@ -95,7 +95,10 @@ unsigned long collector::sweep() {
         objects, then they are only referenced cyclically. delete them in that case */
     unsigned long finalized_count = 0;
     for (auto pair : ref_counts) {
-        if (pair.first->refcount == pair.second) {
+        /* the reference is cyclic if the refcount that we observed was the same as the
+            objects actual refcount. we ignore objects with an observed refcount of 1
+            as these will be freed by the refcount finalization */
+        if (pair.second != 1 && pair.first->refcount == pair.second) {
             this->finalize(pair.first);
             finalized_count++;
         }

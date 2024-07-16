@@ -52,3 +52,24 @@ TEST_F(KanpeiGcTests, AllocatePrimitiveArray) {
         << "Pointer address for managed_ptr<int[]> still found in heap set";
     ASSERT_TRUE(is_freed(test_int_ptr)) << "Pointer address for int[] still found in heap set";
 }
+
+TEST_F(KanpeiGcTests, AllocateManyPrimitives) {
+    for (int n = 0; n < 100000; n++) {
+        managed_ptr<int> *test_ptr = nullptr;
+        int *test_int_ptr = nullptr;
+        {
+            /* allocate a garbage collected primitive int */
+            ref<managed_ptr<int>> test = garb_coll->allocate<int>();
+            test_ptr = &*test;
+
+            /* ensure that the int is marked allocated */
+            ASSERT_TRUE(is_allocated(&**test_ptr)) << "Pointer address not found in heap set";
+            test_int_ptr = &**test_ptr;
+        }
+
+        /* ensure the int was freed */
+        ASSERT_TRUE(is_freed(test_ptr))
+            << "Pointer address for managed_ptr<int> still found in heap set";
+        ASSERT_TRUE(is_freed(test_int_ptr)) << "Pointer address for int* still found in heap set";
+    }
+}
