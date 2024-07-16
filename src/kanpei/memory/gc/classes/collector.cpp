@@ -30,9 +30,9 @@ void collector::collect_loop() {
     while (!this->stop_collect_thread) {
         unsigned long freed_count = this->collect();
 
-        /* if we didn't free anything, sleep for 10 millis */
-        if (freed_count == 0) {
-            std::this_thread::sleep_for(std::chrono::milliseconds(10));
+        /* if we didn't free anything, sleep for a set interval */
+        if (this->sweep_wait_time.count() > 0 && freed_count == 0) {
+            std::this_thread::sleep_for(this->sweep_wait_time);
         }
     }
 }
@@ -44,6 +44,10 @@ void collector::finalize(i_managed *object) {
     this->objects.erase(object);
 }
 
+std::chrono::milliseconds collector::get_sweep_wait_time() {
+    return this->sweep_wait_time;
+}
+
 void collector::remove_reference(i_managed &object) {
     std::scoped_lock lock(this->object_map_mutex);
 
@@ -51,6 +55,10 @@ void collector::remove_reference(i_managed &object) {
     if (--object.refcount == 1) {
         this->finalize(&object);
     }
+}
+
+void collector::set_sweep_wait_time(std::chrono::milliseconds wait_time) {
+    this->sweep_wait_time = wait_time;
 }
 
 unsigned long collector::sweep() {
