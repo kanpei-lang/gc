@@ -23,6 +23,8 @@ namespace kanpei {
                private:
                 std::thread collect_thread;
                 std::atomic<bool> stop_collect_thread = false;
+                std::chrono::duration<int64_t, std::milli> sweep_wait_time =
+                    std::chrono::milliseconds(10);
 
                 i_managed_set objects;
 
@@ -52,6 +54,8 @@ namespace kanpei {
                 void add_reference(i_managed &object);
                 unsigned long collect();
                 void collect_forever();
+                std::chrono::milliseconds get_sweep_wait_time();
+                void set_sweep_wait_time(std::chrono::milliseconds wait_time);
                 void remove_reference(i_managed &object);
             };
         }  // namespace gc
