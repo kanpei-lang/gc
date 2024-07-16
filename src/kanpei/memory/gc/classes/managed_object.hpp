@@ -19,6 +19,8 @@ namespace kanpei {
 
                 template <typename T>
                 void add_reference(ref<T> &object) {
+                    std::lock_guard lock(this->parent->object_map_mutex);
+
                     if (this->references.contains(&*object)) {
                         return;
                     }
@@ -32,6 +34,8 @@ namespace kanpei {
 
                 template <typename T>
                 void remove_reference(ref<T> &object) {
+                    std::lock_guard lock(this->parent->object_map_mutex);
+
                     if (!this->references.contains(&*object)) {
                         return;
                     }

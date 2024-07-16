@@ -25,13 +25,14 @@ namespace kanpei {
                 std::atomic<bool> stop_collect_thread = false;
 
                 i_managed_set objects;
-                std::recursive_mutex object_map_mutex;
 
                 void collect_loop();
                 void finalize(i_managed *object);
                 unsigned long sweep();
 
                public:
+                std::recursive_mutex object_map_mutex;
+
                 ~collector();
 
                 template <typename T>

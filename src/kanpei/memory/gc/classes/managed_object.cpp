@@ -10,6 +10,8 @@ managed_object::managed_object(collector *parent) : i_managed(false) {
 }
 
 managed_object::~managed_object() {
+    std::lock_guard lock(this->parent->object_map_mutex);
+
     for (auto reference : this->references) {
         i_managed object = reference;
         this->remove_reference(object);
@@ -17,6 +19,8 @@ managed_object::~managed_object() {
 }
 
 void managed_object::add_reference(i_managed &object) {
+    std::lock_guard lock(this->parent->object_map_mutex);
+
     if (this->references.contains(&object)) {
         return;
     }
@@ -26,6 +30,8 @@ void managed_object::add_reference(i_managed &object) {
 }
 
 void managed_object::add_reference(i_managed *object) {
+    std::lock_guard lock(this->parent->object_map_mutex);
+
     if (this->references.contains(object)) {
         return;
     }
@@ -35,6 +41,8 @@ void managed_object::add_reference(i_managed *object) {
 }
 
 void managed_object::remove_reference(i_managed &object) {
+    std::lock_guard lock(this->parent->object_map_mutex);
+
     if (!this->references.contains(&object)) {
         return;
     }
@@ -44,6 +52,8 @@ void managed_object::remove_reference(i_managed &object) {
 }
 
 void managed_object::remove_reference(i_managed *object) {
+    std::lock_guard lock(this->parent->object_map_mutex);
+
     if (!this->references.contains(object)) {
         return;
     }
