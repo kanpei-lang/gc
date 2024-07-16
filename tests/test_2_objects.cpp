@@ -9,7 +9,7 @@ using namespace kanpei::memory::gc;
     the sweep is usually much quicker than this, but transient
     conditions can occur that make the tests unreliable if this
     time is much shorter */
-#define SWEEP_PAUSE_MILLISECONDS 500
+#define SWEEP_PAUSE_MILLISECONDS 1000
 
 /* check if allocating/freeing managed objects is working */
 TEST_F(KanpeiGcTests, AllocateObject) {
