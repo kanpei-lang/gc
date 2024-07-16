@@ -9,7 +9,12 @@ std::unordered_set<void *, std::hash<void *>, std::equal_to<void *>, StdMallocAl
 /* global garbage collector for tests */
 collector *garb_coll = nullptr;
 
+/* global mutex for accessing the pointer set */
+std::recursive_mutex heap_pointers_mutex;
+
 bool is_allocated(void *ptr) {
+    std::lock_guard lock(heap_pointers_mutex);
+
     if (heap_pointers != nullptr && heap_pointers->find(ptr) != heap_pointers->end()) {
         return true;
     }
@@ -18,6 +23,8 @@ bool is_allocated(void *ptr) {
 }
 
 bool is_freed(void *ptr) {
+    std::lock_guard lock(heap_pointers_mutex);
+
     if (heap_pointers != nullptr && heap_pointers->find(ptr) == heap_pointers->end()) {
         return true;
     }
@@ -26,6 +33,8 @@ bool is_freed(void *ptr) {
 }
 
 void tracked_free(void *ptr) {
+    std::lock_guard lock(heap_pointers_mutex);
+
     if (heap_pointers != nullptr) {
         heap_pointers->erase(ptr);
     }
@@ -34,6 +43,8 @@ void tracked_free(void *ptr) {
 }
 
 void *tracked_malloc(std::size_t size) {
+    std::lock_guard lock(heap_pointers_mutex);
+
     void *ptr = malloc(size);
 
     if (heap_pointers != nullptr) {

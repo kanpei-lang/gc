@@ -21,6 +21,22 @@ TEST_F(KanpeiGcTests, AllocateObject) {
     ASSERT_TRUE(is_freed(outer_scoped_ptr)) << "Object address still found in heap set";
 }
 
+/* check if allocating/freeing many managed objects is working */
+TEST_F(KanpeiGcTests, AllocateManyObjects) {
+    for (int n = 0; n < 100000; n++) {
+        test_object *outer_scoped_ptr;
+        {
+            ref<test_object> test = ref<test_object>(new test_object);
+            outer_scoped_ptr = &*test;
+
+            /* ensure that the managed_object is marked allocated */
+            ASSERT_TRUE(is_allocated(&*test)) << "Object address not found in heap set";
+        }
+
+        ASSERT_TRUE(is_freed(outer_scoped_ptr)) << "Object address still found in heap set";
+    }
+}
+
 /* check if allocating/freeing managed objects that contain primitives is working */
 TEST_F(KanpeiGcTests, AllocateObjectWithPrimitive) {
     test_object *outer_scoped_ptr;
