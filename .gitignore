@@ -1,4 +1,6 @@
 build
+cov
+*.gcov
 src/test.cpp
 src/test_object.hpp
 .vscode

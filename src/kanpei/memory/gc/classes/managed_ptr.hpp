@@ -1,9 +1,31 @@
-#ifndef __KANPEI_MEMORY_GC_MANAGED_PTR
-#define __KANPEI_MEMORY_GC_MANAGED_PTR
+#ifndef __KANPEI_MEMORY_GC_MANAGED_PTR_DEF
+#define __KANPEI_MEMORY_GC_MANAGED_PTR_DEF
 
-/* clang-format off */
-#include "managed_ptr_def.hpp"
-#include "managed_ptr_impl.cpp"
-/* clang-format on */
+#include "i_managed.hpp"
 
-#endif /* __KANPEI_MEMORY_GC_MANAGED_PTR */
+namespace kanpei {
+    namespace memory {
+        namespace gc {
+            class collector;
+
+            template <typename T>
+            class managed_ptr : public i_managed {
+                T *object;
+
+               public:
+                managed_ptr();
+                managed_ptr(T *object, collector *parent);
+                managed_ptr(const managed_ptr<T> &other);
+                ~managed_ptr();
+
+                T &operator*();
+                managed_ptr<T> &operator=(const managed_ptr<T> &other);
+            };
+        }  // namespace gc
+    }  // namespace memory
+}  // namespace kanpei
+
+/* include the implementation file for templated member functions */
+#include "managed_ptr.cpp"
+
+#endif /* __KANPEI_MEMORY_GC_MANAGED_PTR_DEF */

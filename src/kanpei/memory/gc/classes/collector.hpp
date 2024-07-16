@@ -8,7 +8,6 @@
 
 #include "i_managed.hpp"
 #include "i_managed_set.hpp"
-#include "managed_ptr.hpp"
 #include "object_state.hpp"
 
 namespace kanpei {
@@ -16,6 +15,9 @@ namespace kanpei {
         namespace gc {
             template <typename>
             class ref;
+
+            template <typename>
+            class managed_ptr;
 
             class collector {
                private:
@@ -34,18 +36,20 @@ namespace kanpei {
 
                 template <typename T>
                 ref<managed_ptr<T>> allocate() {
-                    return ref<managed_ptr<T>>(new managed_ptr<T>((T *)malloc(sizeof(T)), this));
+                    return ref<managed_ptr<T>>(
+                        new managed_ptr<T>((T *)::operator new(sizeof(T)), this)
+                    );
                 }
 
                 template <typename T, std::size_t size>
                 ref<managed_ptr<T[size]>> allocate() {
                     return ref<managed_ptr<T[size]>>(
-                        new managed_ptr<T[size]>((T[size])malloc(sizeof(T) * size), this)
+                        new managed_ptr<T[size]>((T[size])::operator new(sizeof(T) * size), this)
                     );
                 }
 
                 void add_reference(i_managed &object);
-                void collect();
+                unsigned long collect();
                 void collect_forever();
                 void remove_reference(i_managed &object);
             };

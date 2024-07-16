@@ -18,13 +18,8 @@ void collector::add_reference(i_managed &object) {
     object.refcount++;
 }
 
-void collector::collect() {
-    unsigned long freed_count = this->sweep();
-
-    /* if we didn't free anything, sleep for 10 millis */
-    if (freed_count == 0) {
-        std::this_thread::sleep_for(std::chrono::milliseconds(10));
-    }
+unsigned long collector::collect() {
+    return this->sweep();
 }
 
 void collector::collect_forever() {
@@ -33,7 +28,12 @@ void collector::collect_forever() {
 
 void collector::collect_loop() {
     while (!this->stop_collect_thread) {
-        this->collect();
+        unsigned long freed_count = this->collect();
+
+        /* if we didn't free anything, sleep for 10 millis */
+        if (freed_count == 0) {
+            std::this_thread::sleep_for(std::chrono::milliseconds(10));
+        }
     }
 }
 
@@ -48,7 +48,7 @@ void collector::remove_reference(i_managed &object) {
     std::scoped_lock lock(this->object_map_mutex);
 
     /* decrement the refcount and finalize this object as necessary */
-    if (--object.refcount == 0) {
+    if (--object.refcount == 1) {
         this->finalize(&object);
     }
 }
@@ -60,7 +60,7 @@ unsigned long collector::sweep() {
     i_managed_set targets(this->objects.begin(), this->objects.end());
     i_managed_set visited;
 
-    phmap::parallel_flat_hash_map<i_managed *, int> ref_counts;
+    phmap::parallel_flat_hash_map<i_managed *, unsigned int> ref_counts;
 
     while (!targets.empty()) {
         /* get the current root node */
@@ -91,7 +91,7 @@ unsigned long collector::sweep() {
         visited.insert(current_node);
     }
 
-    /* loop over all of the objects we saw. if there are no external references any
+    /* loop over all of the objects we saw. if there are no external references to any
         objects, then they are only referenced cyclically. delete them in that case */
     unsigned long finalized_count = 0;
     for (auto pair : ref_counts) {

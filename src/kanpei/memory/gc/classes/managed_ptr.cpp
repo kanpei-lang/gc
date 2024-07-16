@@ -32,7 +32,7 @@ managed_ptr<T>::managed_ptr(const managed_ptr<T> &other) {
 
 template <typename T>
 managed_ptr<T>::~managed_ptr() {
-    free(this->object);
+    ::operator delete(this->object);
 }
 
 template <typename T>

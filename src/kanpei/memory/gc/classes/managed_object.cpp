@@ -17,10 +17,37 @@ managed_object::~managed_object() {
 }
 
 void managed_object::add_reference(i_managed &object) {
+    if (this->references.contains(&object)) {
+        return;
+    }
+
     this->references.insert(&object);
     this->parent->add_reference(object);
 }
 
+void managed_object::add_reference(i_managed *object) {
+    if (this->references.contains(object)) {
+        return;
+    }
+
+    this->references.insert(object);
+    this->parent->add_reference(*object);
+}
+
 void managed_object::remove_reference(i_managed &object) {
+    if (!this->references.contains(&object)) {
+        return;
+    }
+
+    this->references.erase(&object);
     this->parent->remove_reference(object);
+}
+
+void managed_object::remove_reference(i_managed *object) {
+    if (!this->references.contains(object)) {
+        return;
+    }
+
+    this->references.erase(object);
+    this->parent->remove_reference(*object);
 }

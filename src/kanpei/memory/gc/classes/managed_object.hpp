@@ -15,7 +15,30 @@ namespace kanpei {
                 ~managed_object();
 
                 void add_reference(i_managed &object);
+                void add_reference(i_managed *object);
+
+                template <typename T>
+                void add_reference(ref<T> &object) {
+                    if (this->references.contains(&*object)) {
+                        return;
+                    }
+
+                    this->references.insert(&*object);
+                    this->parent->add_reference(*object);
+                }
+
                 void remove_reference(i_managed &object);
+                void remove_reference(i_managed *object);
+
+                template <typename T>
+                void remove_reference(ref<T> &object) {
+                    if (!this->references.contains(&*object)) {
+                        return;
+                    }
+
+                    this->references.erase(&*object);
+                    this->parent->remove_reference(*object);
+                }
             };
         }  // namespace gc
     }  // namespace memory
