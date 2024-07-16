@@ -3,4 +3,4 @@
 
 #include "./classes/all.hpp"
 
-#endif  // __GC_GC_HPP
+#endif /* __GC_GC_HPP */
