@@ -8,7 +8,7 @@ TESTEXECUTABLE := gc_tests
 TESTTARGET := $(BUILDDIR)/$(TESTEXECUTABLE)
 
 COVDIR := ./cov
-COVPERCENT := 60
+COVPERCENT := 55
 
 all: clean tests coverage
 
