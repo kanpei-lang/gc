@@ -15,15 +15,19 @@ namespace kanpei {
                public:
                 ref(i_managed *object) {
                     this->object = object;
+                    this->object->refcount++;
                     object->parent->add_reference(*object);
                 }
 
                 ref(const ref<T> &other) {
                     this->object = other.object;
+                    this->object->refcount++;
                     other.object->parent->add_reference(*(other.object));
                 }
 
                 ~ref() {
+                    this->object->refcount--;
+
                     /* NOTE: the parent can free this->object if its refcount gets
                         down to 1 in remove_reference(). DO NOT use this->object after
                         this function call */
@@ -32,6 +36,7 @@ namespace kanpei {
 
                 ref<T> &operator=(const ref<T> &other) {
                     this->object = other.object;
+                    this->object->refcount++;
                     other.object->parent->add_reference(*(other.object));
 
                     return *this;
