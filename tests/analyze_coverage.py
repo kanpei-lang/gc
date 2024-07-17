@@ -70,4 +70,7 @@ if __name__ == "__main__":
             f"{round(target_coverage * 100, 2)}%"
         )
 
-    print(f"[ ✓ PASSED ] Coverage was {round(target_coverage * 100, 2)}%")
+    print(
+        "[ ✓ PASSED ] Coverage was "
+        f"{round(coverage_stats.lines_covered / coverage_stats.lines_total * 100, 2)}%"
+    )
