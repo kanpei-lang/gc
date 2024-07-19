@@ -2,6 +2,9 @@
 
 using namespace kanpei::memory::gc;
 
+#pragma GCC diagnostic push
+#pragma GCC diagnostic ignored "-Wuse-after-free"
+
 /* ensures that custom heap allocation with tracking is working */
 TEST_F(KanpeiGcTests, CustomAllocation) {
     /* check that the global heap tracking set captures a new pointer */
@@ -12,6 +15,8 @@ TEST_F(KanpeiGcTests, CustomAllocation) {
     delete test;
     ASSERT_TRUE(is_freed(test)) << "Pointer address still found in heap set";
 }
+
+#pragma GCC diagnostic pop
 
 /* check if allocating and freeing primitives based on refcount is working */
 TEST_F(KanpeiGcTests, AllocatePrimitive) {

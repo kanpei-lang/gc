@@ -42,6 +42,12 @@ void collector::finalize(i_managed *object) {
 
     delete object;
     this->objects.erase(object);
+
+    for (auto object_ptr : this->objects) {
+        if (object_ptr->references.contains(object)) {
+            object_ptr->references.erase(object);
+        }
+    }
 }
 
 std::chrono::milliseconds collector::get_sweep_wait_time() {
