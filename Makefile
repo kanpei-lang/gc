@@ -1,5 +1,5 @@
 CXX := g++
-CXXFLAGS := -Wall -Wextra -std=c++20 -pthread
+CXXFLAGS := -Wall -Wextra -std=c++20 -pthread -Ofast
 TESTCXXFLAGS := -I/usr/include/gtest
 LDFLAGS = -lgtest -lgtest_main
 COVFLAGS = -fprofile-arcs -ftest-coverage
@@ -12,7 +12,7 @@ LIBDIR := ./lib
 LIBTARGET := $(LIBDIR)/libkanpei_gc.so
 
 COVDIR := ./cov
-COVPERCENT := 60
+COVPERCENT := 70
 
 INSTALLINCLUDEDIR := /usr/include
 INSTALLLIBDIR := /usr/lib
