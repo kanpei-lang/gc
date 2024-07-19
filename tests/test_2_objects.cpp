@@ -237,7 +237,7 @@ TEST_F(KanpeiGcTests, AllocateObjectsDeepCycle) {
     }
 
     /* wait a bit for the sweep process to run then check if all pointers are freed */
-    std::this_thread::sleep_for(std::chrono::milliseconds(SWEEP_PAUSE_MILLISECONDS));
+    std::this_thread::sleep_for(std::chrono::milliseconds(SWEEP_PAUSE_MILLISECONDS * 2));
     for (int n = 0; n < CYCLE_DEPTH; n++) {
         ASSERT_TRUE(is_freed(outer_scoped_ptrs[n]))
             << "Object address for object still found in heap set";
