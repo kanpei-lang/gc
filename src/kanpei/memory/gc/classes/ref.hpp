@@ -13,6 +13,10 @@ namespace kanpei {
                 i_managed *object;
 
                public:
+                ref() {
+                    this->object = nullptr;
+                }
+
                 ref(i_managed *object) {
                     this->object = object;
                     this->object->refcount++;
