@@ -20,6 +20,7 @@ namespace kanpei {
 
                 T &operator*();
                 managed_ptr<T> &operator=(const managed_ptr<T> &other);
+                managed_ptr<T> &operator=(T *other);
             };
         }  // namespace gc
     }  // namespace memory
