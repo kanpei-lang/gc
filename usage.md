@@ -18,8 +18,7 @@ int main() {
     gc->collect_forever();
 
     /* allocate a managed int and assign the value 123 to it */
-    ref<managed_ptr<int>> example_int = gc.allocate<int>();
-    **example_int = 123;
+    ref<managed_ptr<int>> example_int = gc.allocate<int>(123);
 
     return 0;
 }

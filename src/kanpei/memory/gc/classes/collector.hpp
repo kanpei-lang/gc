@@ -37,10 +37,10 @@ namespace kanpei {
 
                 ~collector();
 
-                template <typename T>
-                ref<managed_ptr<T>> allocate() {
+                template <typename T, typename... Args>
+                ref<managed_ptr<T>> allocate(Args &&...args) {
                     return ref<managed_ptr<T>>(
-                        new managed_ptr<T>((T *)::operator new(sizeof(T)), this)
+                        new managed_ptr<T>(new T(std::forward<Args>(args)...), this)
                     );
                 }
 
