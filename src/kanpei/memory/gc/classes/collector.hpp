@@ -38,16 +38,17 @@ namespace kanpei {
                 ~collector();
 
                 template <typename T, typename... Args>
-                ref<managed_ptr<T>> allocate(Args &&...args) {
+                typename std::enable_if<!std::is_array<T>::value, ref<managed_ptr<T>>>::type
+                allocate(Args &&...args) {
                     return ref<managed_ptr<T>>(
                         new managed_ptr<T>(new T(std::forward<Args>(args)...), this)
                     );
                 }
 
                 template <typename T, std::size_t size>
-                ref<managed_ptr<T[size]>> allocate() {
-                    return ref<managed_ptr<T[size]>>(
-                        new managed_ptr<T[size]>((T[size])::operator new(sizeof(T) * size), this)
+                ref<managed_ptr<T>> allocate() {
+                    return ref<managed_ptr<T>>(
+                        new managed_ptr<T>((T *)::operator new(sizeof(T) * size), this)
                     );
                 }
 
