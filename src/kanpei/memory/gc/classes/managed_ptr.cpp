@@ -48,12 +48,4 @@ managed_ptr<T> &managed_ptr<T>::operator=(const managed_ptr<T> &other) {
     return *this;
 }
 
-template <typename T>
-managed_ptr<T> &managed_ptr<T>::operator=(T *other) {
-    ::operator delete(this->object);
-    this->object = other;
-
-    return *this;
-}
-
 #endif /* __KANPEI_MEMORY_GC_MANAGED_PTR */
