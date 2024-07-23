@@ -3,7 +3,7 @@
 <hr />
 
 ## Introduction
-This repo contains the garbage collector that is used by the reference Kanpei interpreter. It supports automatic management of heap-allocated primitives and user-defined classes.
+This repo contains the garbage collector that is used by the reference Kanpei interpreter. It supports automatic management for heap-allocated instances of both fundamental types and user-defined classes.
 
 Collection is performed using a combination of reference counting and tracing. Cyclic references are detected and freed by identifying isolated subgraphs within the known graph of managed objects.
 

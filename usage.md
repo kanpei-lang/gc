@@ -1,6 +1,21 @@
 # usage.md
 
-## Allocating primitives
+## Installation
+To integrate with the Kanpei garbage collector, you will need to build and install the relevant dynamic library. First, clone this repository:
+
+```shell
+git clone https://github.com/kanpei-lang/gc.git
+cd gc
+```
+
+Then, use the default and install targets of the `Makefile` to install locally:
+
+```shell
+make
+sudo make install
+```
+
+## Allocating fundamental types
 **WRITE A PREAMBLE HERE!!**
 
 For example, here is a very simple example program that allocates a single managed `int` and assigns a value to it:

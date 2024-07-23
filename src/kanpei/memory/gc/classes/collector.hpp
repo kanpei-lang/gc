@@ -8,7 +8,6 @@
 
 #include "i_managed.hpp"
 #include "i_managed_set.hpp"
-#include "object_state.hpp"
 
 namespace kanpei {
     namespace memory {

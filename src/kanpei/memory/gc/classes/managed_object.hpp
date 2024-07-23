@@ -4,7 +4,6 @@
 #include "../parallel-hashmap/parallel_hashmap/phmap.h"
 #include "collector.hpp"
 #include "i_managed.hpp"
-#include "object_state.hpp"
 
 namespace kanpei {
     namespace memory {
