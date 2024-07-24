@@ -14,9 +14,11 @@ namespace kanpei {
 
                public:
                 using pointer_type = T;
+                void (*deleter)(void *) = &::operator delete;
 
                 managed_ptr();
                 managed_ptr(T *object, collector *parent);
+                managed_ptr(T *object, collector *parent, void (*deleter)(void *));
                 managed_ptr(const managed_ptr<T> &other);
                 ~managed_ptr();
 
