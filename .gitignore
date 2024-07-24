@@ -3,7 +3,7 @@ build2
 cov
 *.gcov
 lib
-src/test.cpp
+src/test*.cpp
 src/test_object.hpp
 .vscode
 vgcore*

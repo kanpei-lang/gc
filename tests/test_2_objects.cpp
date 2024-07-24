@@ -51,7 +51,7 @@ TEST_F(KanpeiGcTests, AllocateObjectWithPrimitive) {
 
         /* allocate the primitive and reference it from the object */
         ref<managed_ptr<int>> test_primitive = garb_coll->allocate<int>();
-        outer_scoped_primitive_ptr = &**test_primitive;
+        outer_scoped_primitive_ptr = &*test_primitive;
 
         /* ensure that the objects are marked allocated */
         ASSERT_TRUE(is_allocated(outer_scoped_ptr)) << "Object address not found in heap set";
@@ -236,8 +236,11 @@ TEST_F(KanpeiGcTests, AllocateObjectsDeepCycle) {
         }
     }
 
-    /* wait a bit for the sweep process to run then check if all pointers are freed */
-    std::this_thread::sleep_for(std::chrono::milliseconds(SWEEP_PAUSE_MILLISECONDS * 2));
+    /* wait a bit for the sweep process to run then check if all pointers are freed.
+        very occasionally (i.e., every few thousand runs), the sweep process can get
+        hung up for quite some time. we give it an abundance of time here to avoid
+        testing a thread timing issue */
+    std::this_thread::sleep_for(std::chrono::milliseconds(SWEEP_PAUSE_MILLISECONDS * 6));
     for (int n = 0; n < CYCLE_DEPTH; n++) {
         ASSERT_TRUE(is_freed(outer_scoped_ptrs[n]))
             << "Object address for object still found in heap set";

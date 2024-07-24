@@ -3,7 +3,7 @@
 <hr />
 
 ## Introduction
-This repo contains the garbage collector that is used by the reference Kanpei interpreter. It supports automatic management of heap-allocated primitives and user-defined classes.
+This repo contains the garbage collector that is used by the reference Kanpei interpreter. It supports automatic management for heap-allocated instances of both fundamental types and user-defined classes.
 
 Collection is performed using a combination of reference counting and tracing. Cyclic references are detected and freed by identifying isolated subgraphs within the known graph of managed objects.
 
@@ -13,6 +13,16 @@ This repository include submodules. Make sure to include submodules by using the
 ```shell
 git clone --recurse-submodules https://github.com/kanpei-lang/gc.git
 ```
+
+## Installation
+The Kanpei garbage collector can be installed as a dynamic library and a set of headers to be used in C++. The default `make` target can be used to build the library and it may be installed with `make install`:
+
+```shell
+make
+sudo make install
+```
+
+The headers will be copied to `/usr/include` and the library will be copied to `/usr/lib` so superuser privileges are required for the install. The library may be linked in `g++` using the `-lkanpei_gc` command line option. For more information regarding integration with the Kanpei garbage collector, see [usage.md](usage.md).
 
 ## Running tests
 The `Makefile` bundled with this repository be used to build and run the garbage collector unit tests and automatically evaluate test coverage.

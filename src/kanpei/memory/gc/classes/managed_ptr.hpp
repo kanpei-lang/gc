@@ -13,13 +13,27 @@ namespace kanpei {
                 T *object;
 
                public:
+                using pointer_type = T;
+                void (*deleter)(void *) = &::operator delete;
+
                 managed_ptr();
                 managed_ptr(T *object, collector *parent);
+                managed_ptr(T *object, collector *parent, void (*deleter)(void *));
                 managed_ptr(const managed_ptr<T> &other);
                 ~managed_ptr();
 
                 T &operator*();
                 managed_ptr<T> &operator=(const managed_ptr<T> &other);
+            };
+
+            template <typename T>
+            struct is_managed_ptr {
+                static const bool value = false;
+            };
+
+            template <typename T>
+            struct is_managed_ptr<managed_ptr<T>> {
+                static const bool value = true;
             };
         }  // namespace gc
     }  // namespace memory

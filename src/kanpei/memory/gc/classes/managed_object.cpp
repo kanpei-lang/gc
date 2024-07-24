@@ -4,7 +4,6 @@ using namespace kanpei::memory::gc;
 
 managed_object::managed_object(collector *parent) : i_managed(false) {
     this->parent = parent;
-    this->is_primitive = false;
 
     parent->add_reference(*this);
 }

@@ -25,7 +25,7 @@ TEST_F(KanpeiGcTests, AllocatePrimitive) {
     {
         /* allocate a garbage collected primitive int */
         ref<managed_ptr<int>> test = garb_coll->allocate<int>();
-        test_ptr = &*test;
+        test_ptr = test.get_pointer();
 
         /* ensure that the int is marked allocated */
         ASSERT_TRUE(is_allocated(&**test_ptr)) << "Pointer address not found in heap set";
@@ -40,12 +40,12 @@ TEST_F(KanpeiGcTests, AllocatePrimitive) {
 
 /* check if allocating/freeing primitive arrays based on refcount is working */
 TEST_F(KanpeiGcTests, AllocatePrimitiveArray) {
-    managed_ptr<int[100]> *test_ptr = nullptr;
-    int(*test_int_ptr)[100];
+    managed_ptr<int> *test_ptr = nullptr;
+    int *test_int_ptr;
     {
         /* allocate a garbage collected primitive int array */
-        ref<managed_ptr<int[100]>> test = garb_coll->allocate<int[100]>();
-        test_ptr = &*test;
+        ref<managed_ptr<int>> test = garb_coll->allocate<int, 100>();
+        test_ptr = test.get_pointer();
 
         /* ensure that the int array is marked allocated */
         ASSERT_TRUE(is_allocated(&**test_ptr)) << "Pointer address not found in heap set";
@@ -65,7 +65,7 @@ TEST_F(KanpeiGcTests, AllocateManyPrimitives) {
         {
             /* allocate a garbage collected primitive int */
             ref<managed_ptr<int>> test = garb_coll->allocate<int>();
-            test_ptr = &*test;
+            test_ptr = test.get_pointer();
 
             /* ensure that the int is marked allocated */
             ASSERT_TRUE(is_allocated(&**test_ptr)) << "Pointer address not found in heap set";
