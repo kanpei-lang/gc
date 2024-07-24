@@ -51,7 +51,7 @@ TEST_F(KanpeiGcTests, AllocateObjectWithPrimitive) {
 
         /* allocate the primitive and reference it from the object */
         ref<managed_ptr<int>> test_primitive = garb_coll->allocate<int>();
-        outer_scoped_primitive_ptr = &**test_primitive;
+        outer_scoped_primitive_ptr = &*test_primitive;
 
         /* ensure that the objects are marked allocated */
         ASSERT_TRUE(is_allocated(outer_scoped_ptr)) << "Object address not found in heap set";

@@ -18,12 +18,12 @@ namespace kanpei {
 
             class i_managed {
                public:
-                bool is_primitive;
+                bool is_fundamental;
                 unsigned int refcount = 0;
                 collector *parent;
                 i_managed_set references;
 
-                i_managed(bool is_primitive = true) : is_primitive(is_primitive) {}
+                i_managed(bool is_fundamental = true) : is_fundamental(is_fundamental) {}
                 virtual ~i_managed() {}
 
                 bool operator==(const i_managed &other) const {

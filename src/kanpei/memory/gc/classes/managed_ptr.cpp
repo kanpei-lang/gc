@@ -23,8 +23,18 @@ managed_ptr<T>::managed_ptr(T *object, collector *parent) {
 }
 
 template <typename T>
+managed_ptr<T>::managed_ptr(T *object, collector *parent, void (*deleter)(void *)) {
+    this->parent = parent;
+    this->deleter = deleter;
+    this->object = object;
+
+    parent->add_reference(*this);
+}
+
+template <typename T>
 managed_ptr<T>::managed_ptr(const managed_ptr<T> &other) {
     this->parent = other.parent;
+    this->deleter = other.deleter;
     this->object = other.object;
 
     parent->add_reference(*this);
@@ -32,7 +42,8 @@ managed_ptr<T>::managed_ptr(const managed_ptr<T> &other) {
 
 template <typename T>
 managed_ptr<T>::~managed_ptr() {
-    ::operator delete(this->object);
+    this->deleter(this->object);
+    this->object = nullptr;
 }
 
 template <typename T>
@@ -43,6 +54,7 @@ T &managed_ptr<T>::operator*() {
 template <typename T>
 managed_ptr<T> &managed_ptr<T>::operator=(const managed_ptr<T> &other) {
     this->object = other.object;
+    this->deleter = other.deleter;
     this->parent = other.parent;
 
     return *this;
