@@ -1,7 +1,9 @@
-# usage.md
+# 🟠 kanpei-lang/gc
+<i>usage.md - Usage and integration guide</i>
+<hr />
 
 ## Installation
-To integrate with the Kanpei garbage collector, you will need to build and install the relevant dynamic library. First, clone this repository:
+To use the Kanpei garbage collector in your client code, you will need to build and install the relevant dynamic library. First, clone this repository:
 
 ```shell
 git clone https://github.com/kanpei-lang/gc.git
@@ -87,3 +89,6 @@ int main() {
     return 0;
 }
 ```
+
+## Working with C++ classes
+
