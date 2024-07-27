@@ -9,7 +9,7 @@ TESTEXECUTABLE := gc_tests
 TESTTARGET := $(BUILDDIR)/$(TESTEXECUTABLE)
 
 LIBDIR := ./lib
-LIBTARGET := $(LIBDIR)/libkanpei_gc.so
+LIBTARGET := $(LIBDIR)/libkanpei_lang_gc.so
 
 COVDIR := ./cov
 COVPERCENT := 70
