@@ -22,7 +22,7 @@ make
 sudo make install
 ```
 
-The headers will be copied to `/usr/include` and the library will be copied to `/usr/lib` so superuser privileges are required for the install. The library may be linked in `g++` using the `-lkanpei_gc` command line option. For more information regarding integration with the Kanpei garbage collector, see [usage.md](usage.md).
+The headers will be copied to `/usr/include` and the library will be copied to `/usr/lib` so superuser privileges are required for the install. The library may be linked in `g++` using the `-lkanpei_lang_gc` command line option. For more information regarding integration with the Kanpei garbage collector, see [usage.md](usage.md).
 
 ## Running tests
 The `Makefile` bundled with this repository be used to build and run the garbage collector unit tests and automatically evaluate test coverage.

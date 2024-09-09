@@ -24,10 +24,17 @@ clean:
 	rm -rf $(BUILDDIR)
 	rm -rf $(LIBDIR)
 
+debug: build_lib_debug
+
 build_lib: ensure_lib_dir
 	$(CXX) $(CXXFLAGS) -fPIC ./src/kanpei/memory/gc/classes/*.cpp -c
 	mv *.o $(LIBDIR)
 	$(CXX) $(CXXFLAGS) -fPIC -shared -o $(LIBTARGET) ./src/kanpei/memory/gc/classes/*.cpp
+
+build_lib_debug: ensure_lib_dir
+	$(CXX) $(CXXFLAGS) -g -fPIC ./src/kanpei/memory/gc/classes/*.cpp -c
+	mv *.o $(LIBDIR)
+	$(CXX) $(CXXFLAGS) -g -fPIC -shared -o $(LIBTARGET) ./src/kanpei/memory/gc/classes/*.cpp
 
 coverage:
 	mkdir -p $(COVDIR)
