@@ -23,7 +23,13 @@ unsigned long collector::collect() {
 }
 
 void collector::collect_forever() {
-    this->collect_thread = std::thread([&](collector *gc) { gc->collect_loop(); }, this);
+    /* NOTE: this check is here to make calls to collect_forever() idempotent.
+        Specifically in tests, each test suite may try to restart a collector
+        instance. Without this check, the running thread would be freed, resulting
+        in hard to trace 'abort without exception' errors */
+    if (!this->collect_thread.joinable()) {
+        this->collect_thread = std::thread([&](collector *gc) { gc->collect_loop(); }, this);
+    }
 }
 
 void collector::collect_loop() {
